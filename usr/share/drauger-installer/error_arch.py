@@ -34,7 +34,7 @@ while (length >= 4):
 LANG = "".join(LANG)
 
 try:
-	with open("/etc/drauger-locales/%s/drauger-installer.conf", "r") as FILE:
+	with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
 		contents = FILE.read()
 	contents = contents.split("\n")
 	for each in range(len(contents)):
@@ -46,6 +46,13 @@ try:
 		length = length - 1
 	for each in range(len(contents)):
 		contents[each] = "".join(contents[each])
+	for each in range(len(contents)):
+		if "\t" in contents[each]:
+			key, value = contents[each].split("\t", 1)
+			if value.startswith('"') and value.endswith('"'):
+				value = value.strip('"')
+			value = value.replace("\\n", "\n").replace("\\t", "\t")
+			contents[each] = [key, value]
 	for each in contents:
 		if (each[0] == "arch_error"):
 			confirm = each[1]
