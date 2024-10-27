@@ -34,7 +34,8 @@ while (length >= 5):
 LANG = "".join(LANG)
 
 try:
-    with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
+    with open("/etc/drauger-locales/%s/drauger-installer.conf"
+              % (LANG), "r") as FILE:
         contents = FILE.read()
     contents = contents.split("\n")
     for each in range(len(contents)):
@@ -60,7 +61,9 @@ try:
             NEXT = each[1]
 
 except:
-    confirm = "\n\tWelcome to Drauger Installer! In the following screen, please navigate to the *.deb file you wish to install, select it, then hit 'Ok'.\t\n"
+    confirm = "\n\tWelcome to Drauger Installer! In the following screen, \
+    please navigate to the *.deb file you wish to install, \
+    select it, then hit 'Ok'.\t\n"
     NEXT = "Next -->"
 
 
@@ -84,8 +87,10 @@ class splash(Gtk.Window):
     def onnextclicked(self, widget):
         dialog = Gtk.FileChooserDialog("Drauger Installer", self,
                                        Gtk.FileChooserAction.OPEN,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                        Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+                                       (Gtk.STOCK_CANCEL,
+                                        Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_OPEN,
+                                        Gtk.ResponseType.OK))
 
         self.add_filters(dialog)
 

@@ -38,7 +38,8 @@ while (length >= 5):
 LANG = "".join(LANG)
 
 try:
-    with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
+    with open("/etc/drauger-locales/%s/drauger-installer.conf"
+              % (LANG), "r") as FILE:
         contents = FILE.read()
     contents = contents.split("\n")
     for each in range(len(contents)):
@@ -69,7 +70,8 @@ try:
     confirm = confirm % (actioning, error_code)
 
 except:
-    confirm = "\n\tAn error was encountered %s your app. Error code %s was thrown from apt\t\n" % (
+    confirm = "\n\tAn error was encountered %s your app. \
+    Error code %s was thrown from apt\t\n" % (
         actioning, error_code)
     EXIT = "EXIT"
 

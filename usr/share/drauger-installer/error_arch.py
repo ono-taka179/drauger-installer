@@ -34,7 +34,8 @@ while (length >= 4):
 LANG = "".join(LANG)
 
 try:
-    with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
+    with open("/etc/drauger-locales/%s/drauger-installer.conf"
+              % (LANG), "r") as FILE:
         contents = FILE.read()
     contents = contents.split("\n")
     for each in range(len(contents)):
@@ -60,7 +61,8 @@ try:
             EXIT = each[1]
 
 except:
-    confirm = "\n\tThis package is not designed for your CPU Archetecture. It will not run correctly if installed.\t\n"
+    confirm = "\n\tThis package is not designed for your CPU Archetecture. \
+    It will not run correctly if installed.\t\n"
     EXIT = "EXIT"
 
 
