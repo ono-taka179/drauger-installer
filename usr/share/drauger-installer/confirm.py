@@ -72,12 +72,12 @@ try:
 
 except:
     confirm = """
-	Package Info:
+    Package Info:
 
-	%s
+    %s
 
-	Would you like to %s this package?
-	""" % (info, action)
+    Would you like to %s this package?
+    """ % (info, action)
     YES = "YES"
     NO = "NO"
 
