@@ -21,102 +21,103 @@
 #  MA 02110-1301, USA.
 #
 #
+from os import getenv
+from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
-from os import getenv
 
 LANG = list(getenv("LANG"))
 length = len(LANG) - 1
 while (length >= 5):
-	del(LANG[length])
-	length = length - 1
+    del (LANG[length])
+    length = length - 1
 LANG = "".join(LANG)
 
 try:
-	with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
-		contents = FILE.read()
-	contents = contents.split("\n")
-	for each in range(len(contents)):
-		contents[each] = list(contents[each])
-	length = len(contents) - 1
-	while (length >= 0):
-		if ((contents[length] == []) or (contents[length][0] == "#")):
-			del(contents[length])
-		length = length - 1
-	for each in range(len(contents)):
-		contents[each] = "".join(contents[each])
-	for each in range(len(contents)):
-		if "\t" in contents[each]:
-			key, value = contents[each].split("\t", 1)
-			if value.startswith('"') and value.endswith('"'):
-				value = value.strip('"')
-			value = value.replace("\\n", "\n").replace("\\t", "\t")
-			contents[each] = [key, value]
-	for each in contents:
-		if (each[0] == "welcome_gui"):
-			confirm = each[1]
-		elif (each[0] == "next"):
-			NEXT = each[1]
+    with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
+        contents = FILE.read()
+    contents = contents.split("\n")
+    for each in range(len(contents)):
+        contents[each] = list(contents[each])
+    length = len(contents) - 1
+    while (length >= 0):
+        if ((contents[length] == []) or (contents[length][0] == "#")):
+            del (contents[length])
+        length = length - 1
+    for each in range(len(contents)):
+        contents[each] = "".join(contents[each])
+    for each in range(len(contents)):
+        if "\t" in contents[each]:
+            key, value = contents[each].split("\t", 1)
+            if value.startswith('"') and value.endswith('"'):
+                value = value.strip('"')
+            value = value.replace("\\n", "\n").replace("\\t", "\t")
+            contents[each] = [key, value]
+    for each in contents:
+        if (each[0] == "welcome_gui"):
+            confirm = each[1]
+        elif (each[0] == "next"):
+            NEXT = each[1]
 
 except:
-	confirm = "\n\tWelcome to Drauger Installer! In the following screen, please navigate to the *.deb file you wish to install, select it, then hit 'Ok'.\t\n"
-	NEXT = "Next -->"
+    confirm = "\n\tWelcome to Drauger Installer! In the following screen, please navigate to the *.deb file you wish to install, select it, then hit 'Ok'.\t\n"
+    NEXT = "Next -->"
+
 
 class splash(Gtk.Window):
-		def __init__(self):
-			Gtk.Window.__init__(self, title="Drauger Installer")
-			self.set_icon_from_file("/usr/share/icons/Drauger/720x720/Menus/install-drauger.png")
-			self.grid=Gtk.Grid(orientation=Gtk.Orientation.VERTICAL,)
-			self.add(self.grid)
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Drauger Installer")
+        self.set_icon_from_file(
+            "/usr/share/icons/Drauger/720x720/Menus/install-drauger.png")
+        self.grid = Gtk.Grid(orientation=Gtk.Orientation.VERTICAL,)
+        self.add(self.grid)
 
-			self.label = Gtk.Label()
-			self.label.set_markup(confirm)
-			self.label.set_justify(Gtk.Justification.CENTER)
-			self.grid.attach(self.label, 1, 1, 8, 1)
+        self.label = Gtk.Label()
+        self.label.set_markup(confirm)
+        self.label.set_justify(Gtk.Justification.CENTER)
+        self.grid.attach(self.label, 1, 1, 8, 1)
 
-			self.button1 = Gtk.Button.new_with_label(NEXT)
-			self.button1.connect("clicked", self.onnextclicked)
-			self.grid.attach(self.button1, 7, 2, 1, 1)
+        self.button1 = Gtk.Button.new_with_label(NEXT)
+        self.button1.connect("clicked", self.onnextclicked)
+        self.grid.attach(self.button1, 7, 2, 1, 1)
 
-		def onnextclicked(self, widget):
-			dialog = Gtk.FileChooserDialog("Drauger Installer", self,
-			Gtk.FileChooserAction.OPEN,
-			(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-			Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+    def onnextclicked(self, widget):
+        dialog = Gtk.FileChooserDialog("Drauger Installer", self,
+                                       Gtk.FileChooserAction.OPEN,
+                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                        Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-			self.add_filters(dialog)
+        self.add_filters(dialog)
 
-			response = dialog.run()
-			if response == Gtk.ResponseType.OK:
-				print(dialog.get_filename())
-				exit(0)
-			elif response == Gtk.ResponseType.CANCEL:
-				exit(2)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            print(dialog.get_filename())
+            exit(0)
+        elif response == Gtk.ResponseType.CANCEL:
+            exit(2)
 
-			dialog.destroy()
+        dialog.destroy()
 
-		def add_filters(self, dialog):
-			filter_text = Gtk.FileFilter()
-			filter_text.set_name("Archive")
-			filter_text.add_mime_type("application/vnd.debian.binary-package")
-			dialog.add_filter(filter_text)
+    def add_filters(self, dialog):
+        filter_text = Gtk.FileFilter()
+        filter_text.set_name("Archive")
+        filter_text.add_mime_type("application/vnd.debian.binary-package")
+        dialog.add_filter(filter_text)
 
-			filter_any = Gtk.FileFilter()
-			filter_any.set_name("Any files")
-			filter_any.add_pattern("*")
-			dialog.add_filter(filter_any)
-
+        filter_any = Gtk.FileFilter()
+        filter_any.set_name("Any files")
+        filter_any.add_pattern("*")
+        dialog.add_filter(filter_any)
 
 
 def show_splash():
-	window = splash()
-	window.set_decorated(True)
-	window.set_resizable(False)
-	window.set_position(Gtk.WindowPosition.CENTER)
-	window.connect("delete-event", Gtk.main_quit)
-	window.show_all()
-	Gtk.main()
+    window = splash()
+    window.set_decorated(True)
+    window.set_resizable(False)
+    window.set_position(Gtk.WindowPosition.CENTER)
+    window.connect("delete-event", Gtk.main_quit)
+    window.show_all()
+    Gtk.main()
 
 
 show_splash()

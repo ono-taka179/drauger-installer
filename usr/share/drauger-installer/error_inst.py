@@ -21,85 +21,88 @@
 #  MA 02110-1301, USA.
 #
 #
+from os import getenv
+from sys import argv
+from gi.repository import Gtk, Gdk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
-from sys import argv
-from os import getenv
 
-actioning=argv[1]
-error_code=argv[2]
+actioning = argv[1]
+error_code = argv[2]
 
 LANG = list(getenv("LANG"))
 length = len(LANG) - 1
 while (length >= 5):
-	del(LANG[length])
-	length = length - 1
+    del (LANG[length])
+    length = length - 1
 LANG = "".join(LANG)
 
 try:
-	with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
-		contents = FILE.read()
-	contents = contents.split("\n")
-	for each in range(len(contents)):
-		contents[each] = list(contents[each])
-	length = len(contents) - 1
-	while (length >= 0):
-		if ((contents[length] == []) or (contents[length][0] == "#")):
-			del(contents[length])
-		length = length - 1
-	for each in range(len(contents)):
-		contents[each] = "".join(contents[each])
-	for each in range(len(contents)):
-		if "\t" in contents[each]:
-			key, value = contents[each].split("\t", 1)
-			if value.startswith('"') and value.endswith('"'):
-				value = value.strip('"')
-			value = value.replace("\\n", "\n").replace("\\t", "\t")
-			contents[each] = [key, value]
-	for each in contents:
-		if (each[0] == "error_inst"):
-			confirm = each[1]
-		elif (each[0] == "EXIT"):
-			EXIT = each[1]
-	confirm = confirm.split("$actioning")
-	confirm = "%s".join(confirm)
-	confirm = confirm.split("$error_code")
-	confirm = "%s".join(confirm)
-	confirm = confirm % (actioning, error_code)
+    with open("/etc/drauger-locales/%s/drauger-installer.conf" % (LANG), "r") as FILE:
+        contents = FILE.read()
+    contents = contents.split("\n")
+    for each in range(len(contents)):
+        contents[each] = list(contents[each])
+    length = len(contents) - 1
+    while (length >= 0):
+        if ((contents[length] == []) or (contents[length][0] == "#")):
+            del (contents[length])
+        length = length - 1
+    for each in range(len(contents)):
+        contents[each] = "".join(contents[each])
+    for each in range(len(contents)):
+        if "\t" in contents[each]:
+            key, value = contents[each].split("\t", 1)
+            if value.startswith('"') and value.endswith('"'):
+                value = value.strip('"')
+            value = value.replace("\\n", "\n").replace("\\t", "\t")
+            contents[each] = [key, value]
+    for each in contents:
+        if (each[0] == "error_inst"):
+            confirm = each[1]
+        elif (each[0] == "EXIT"):
+            EXIT = each[1]
+    confirm = confirm.split("$actioning")
+    confirm = "%s".join(confirm)
+    confirm = confirm.split("$error_code")
+    confirm = "%s".join(confirm)
+    confirm = confirm % (actioning, error_code)
 
 except:
-	confirm = "\n\tAn error was encountered %s your app. Error code %s was thrown from apt\t\n" % (actioning, error_code)
-	EXIT = "EXIT"
+    confirm = "\n\tAn error was encountered %s your app. Error code %s was thrown from apt\t\n" % (
+        actioning, error_code)
+    EXIT = "EXIT"
+
 
 class error(Gtk.Window):
-	def __init__(self):
-			Gtk.Window.__init__(self, title="Drauger Installer")
-			self.set_icon_from_file("/usr/share/icons/Drauger/720x720/Menus/install-drauger.png")
-			self.grid=Gtk.Grid(orientation=Gtk.Orientation.VERTICAL,)
-			self.add(self.grid)
+    def __init__(self):
+        Gtk.Window.__init__(self, title="Drauger Installer")
+        self.set_icon_from_file(
+            "/usr/share/icons/Drauger/720x720/Menus/install-drauger.png")
+        self.grid = Gtk.Grid(orientation=Gtk.Orientation.VERTICAL,)
+        self.add(self.grid)
 
-			self.label = Gtk.Label()
-			self.label.set_markup(confirm)
-			self.label.set_justify(Gtk.Justification.CENTER)
-			self.grid.attach(self.label, 1, 1, 8, 1)
+        self.label = Gtk.Label()
+        self.label.set_markup(confirm)
+        self.label.set_justify(Gtk.Justification.CENTER)
+        self.grid.attach(self.label, 1, 1, 8, 1)
 
-			self.button1 = Gtk.Button.new_with_label(EXIT)
-			self.button1.connect("clicked", self.onexitclicked)
-			self.grid.attach(self.button1, 7, 2, 1, 1)
+        self.button1 = Gtk.Button.new_with_label(EXIT)
+        self.button1.connect("clicked", self.onexitclicked)
+        self.grid.attach(self.button1, 7, 2, 1, 1)
 
-	def onexitclicked(self, button):
-		exit(2)
-
+    def onexitclicked(self, button):
+        exit(2)
 
 
 def show_error():
-	window = error()
-	window.set_decorated(True)
-	window.set_resizable(False)
-	window.set_position(Gtk.WindowPosition.CENTER)
-	window.connect("delete-event", Gtk.main_quit)
-	window.show_all()
-	Gtk.main()
+    window = error()
+    window.set_decorated(True)
+    window.set_resizable(False)
+    window.set_position(Gtk.WindowPosition.CENTER)
+    window.connect("delete-event", Gtk.main_quit)
+    window.show_all()
+    Gtk.main()
+
 
 show_error()
